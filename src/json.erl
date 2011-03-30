@@ -43,7 +43,9 @@ do_encode(I) when is_integer(I) ->
     integer_to_list(I);
 do_encode(F) when is_float(F) ->
     encode_double(F);
-do_encode(S) when is_binary(S); is_atom(S) ->
+do_encode(A) when is_atom(A) ->
+    do_encode_string(atom_to_list(A));
+do_encode(S) when is_binary(S) ->
     do_encode_string(S);
 do_encode({Props}) when is_list(Props) ->
     encode_proplist(Props);
@@ -65,7 +67,7 @@ encode_proplist([]) ->
     <<"{}">>;
 encode_proplist(Props) ->
     F = fun ({K, V}, Acc) ->
-                KS = do_encode_string(K),
+                KS = do_encode(K),
                 VS = do_encode(V),
                 [$,, VS, $:, KS | Acc]
         end,
